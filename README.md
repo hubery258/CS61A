@@ -5,3 +5,5 @@
 ## USEFUL LINK
 
 [TeachYourselfCS](https://www.learncs.site/docs/curriculum-resource/cs61a)
+[中文教材](https://composingprograms.netlify.app/)
+[原文教材](https://www.composingprograms.com/)
