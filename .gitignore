@@ -1,0 +1,21 @@
+# Python 编译缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# OK 自动评分器 —— 本地状态文件（每个人的不同，不需要提交）
+.ok_history
+.ok_messages
+.ok_consent
+.ok_storage.*
+
+# OK 可执行文件（可以随时从 okpy.org 重新下载）
+ok
+
+# 下载的压缩包
+*.zip
+
+# 
+tests/
+construct_check.py
+*.ok

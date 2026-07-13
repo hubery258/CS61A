@@ -52,12 +52,20 @@ for <name> in <expression>:
 ```
 多个值绑到多个名称上的模式为**序列解包**，如果语句中用不到`<name>`可以直接`_`
 
+(???+ note '列表操作')
+    - `append(elem)`:追加元素到末尾，返回`None`
+    - `extend(s)`:将可迭代对象`s`中所有元素加到末尾，返回`None`
+    - `insert(i, elem)`: 在索引`i`处插入`elem`,若`i`>=列表长度，插入到末尾
+    - `remove(elem)`: 移除第一个出现的`elem`，若`elem`不在列表中，报错
+    - `pop(i)`:删除并返回索引`i`处的元素
+    - `pop()`:删除并返回最后一个元素
+
 ### 范围(ranges)
 
 ```python
 >>> range(1, 10)  # [1, 10)，包括 1，但不包括 10
-range(1, 10)
->>> list(range(5, 8))
+range(1, 10) 
+>>> list(range(5, 8)) # list函数把可迭代对象换成列表格式
 [5, 6, 7]
 >>> list(range(4))
 [0, 1, 2, 3] # 只给一个参数从0开始
@@ -232,6 +240,56 @@ wd2(6)
 wd(8) # 2里balance变化不影响1
 ```
 只是初始赋值要在函数之外。非局部语句（nonlocal statement）会改变所在函数定义中剩余的所有赋值语句。在将声明为 `nonlocal`的变量尝试赋值的语句中都不会直接在当前帧中寻找并更改值，而是找到定义变量的帧，并在该帧中更新该变量。如果在声明 `nonlocal` 之前还没有赋值，则 `nonlocal` 声明将会报错。
+
+## 迭代器
+
+**迭代器**(iterators)是一种对象，可实现`__iter__()`方法与`__next__()`方法。
+- 注意`list`,`dict`等都只是**可迭代对象**(iterable),它们实现了`__iter__()`方法,包括**序列值**(string,tuples)与**容器**(sets,dictionaries),可以返回一个迭代器，而迭代器本身还可以再次返回迭代器，返回的不是迭代器副本，而是**该迭代器本身**：
+    ```python
+    >>> num = [1, 3, 5, 7]
+    >>> s = iter(num) # s = num.__iter__()
+    >>> next(s)
+    1
+    >>> next(s)
+    3
+    >>> v = iter(num)
+    >>> next(v)
+    1
+    >>> t = iter(s)
+    >>> next(t)
+    5
+    >>> next(s)
+    7
+    ```
+- 迭代器有:
+    - 检索下一个元素的机制
+    - 到达序列末尾并没有生育元素时发出信号的机制
+- 表示没有更多可用值的方式是在调用 `next` 时引发 `StopIteration` 异常
+- 迭代器遵循**惰性计算**，不会一次性生成/存储所有元素，只有每次调用`next()`才计算/取出一个元素
+
+一些内置函数将可迭代对象作为参数并返回迭代器，如`map`,`filter`,`zip`,`reversed`函数...
+
+`for`语句的本质是对迭代器进行操作，当for语句执行时先评估`<expression>`要是可迭代对象，然后对其调用`__iter__`方法，再重复调用该迭代器的`__next__`方法把结果绑定到`name`上再执行`<suite>`
+
+### 生成器
+
+生成器(Generators)是由**生成器函数**返回的特殊的**迭代器**，生成器函数内不包含`return`语句，而是用`tield`语句返回元素:
+```python
+>>> def letters_generator():
+        current = 'a'
+        while current <= 'd':
+            yield current
+            current = chr(ord(current) + 1) 
+            # ord()函数接收一个字母返回ASCII值，chr接收ASCII值返回字母
+
+>>> for letter in letters_generator():
+        print(letter)
+a
+b
+c
+d
+```
+`yield`语句返回其后面的值，然后暂停函数，直到下次调用`__next__`方法,调用生成器函数时本质是返回了一个生成器
 
 ## 约束传递
 
